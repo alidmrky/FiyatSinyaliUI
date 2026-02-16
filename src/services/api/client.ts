@@ -1,4 +1,6 @@
 import { env } from '@/config/env'
+import { STORAGE_KEYS } from '@/constants/storage.constants'
+import { getItem } from '@/utils/storage'
 import type { BaseResponse, ApiError, Result } from '@/types'
 
 /**
@@ -10,8 +12,16 @@ export async function apiRequest<T>(
 ): Promise<T> {
     const url = `${env.apiBaseUrl}/${endpoint}`
 
+    // Get auth token from storage
+    const token = getItem<string>(STORAGE_KEYS.ACCESS_TOKEN)
+
     const defaultHeaders: HeadersInit = {
         'Content-Type': 'application/json',
+    }
+
+    // Add Authorization header if token exists
+    if (token) {
+        defaultHeaders['Authorization'] = `Bearer ${token}`
     }
 
     try {

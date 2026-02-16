@@ -4,6 +4,9 @@ import AdminPage from '@/pages/AdminPage'
 import CategoriesPage from '@/pages/admin/CategoriesPage'
 import ScraperMonitoringPage from '@/pages/admin/ScraperMonitoring'
 import SiteConfigPage from '@/pages/admin/SiteConfigPage'
+import LoginPage from '@/pages/auth/LoginPage'
+import RegisterPage from '@/pages/auth/RegisterPage'
+import ProfilePage from '@/pages/auth/ProfilePage'
 
 export const APP_ROUTES: RouteConfig[] = [
     {
@@ -14,6 +17,20 @@ export const APP_ROUTES: RouteConfig[] = [
             order: 1,
         },
     },
+    // Auth routes (no menu)
+    {
+        path: '/login',
+        element: <LoginPage />,
+    },
+    {
+        path: '/register',
+        element: <RegisterPage />,
+    },
+    {
+        path: '/profile',
+        element: <ProfilePage />,
+    },
+    // Admin routes
     {
         path: '/admin',
         element: <AdminPage />,

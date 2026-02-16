@@ -48,3 +48,9 @@ export const storage = {
         }
     },
 }
+
+// Export standalone functions for easier imports
+export const getItem = storage.get
+export const setItem = storage.set
+export const removeItem = storage.remove
+export const clearStorage = storage.clear
