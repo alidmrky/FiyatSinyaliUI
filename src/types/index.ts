@@ -1,3 +1,3 @@
-export * from './common'
-export * from './product'
-export * from './auth'
+export * from './common.types';
+export * from './brand';
+export * from './dashboard';

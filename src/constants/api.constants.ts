@@ -22,4 +22,27 @@ export const API_ENDPOINTS = {
         RESET_PASSWORD: 'api/auth/reset-password',
         CONFIRM_EMAIL: 'api/auth/confirm-email',
     },
+    BRANDS: {
+        LIST: 'api/masterbrands',
+        GET: 'api/masterbrands',
+        SEARCH: 'api/masterbrands/search',
+        TOP: 'api/masterbrands/top',
+        CREATE: 'api/masterbrands',
+        UPDATE: 'api/masterbrands',
+        DELETE: 'api/masterbrands',
+        ADD_ALTERNATIVE: 'api/masterbrands',
+    },
+    UNMAPPED_BRANDS: {
+        LIST: 'api/unmappedbrands/list',
+        GET: 'api/unmappedbrands',
+        PENDING_COUNT: 'api/unmappedbrands/pending-count',
+        SUGGESTIONS: 'api/unmappedbrands',
+        RESOLVE: 'api/unmappedbrands',
+        BULK_IGNORE: 'api/unmappedbrands/bulk-ignore',
+    },
+    DASHBOARD: {
+        STATS: 'api/dashboard/stats',
+        MONGO_STATS: 'api/dashboard/mongo-stats',
+        POSTGRE_STATS: 'api/dashboard/postgre-stats',
+    },
 } as const

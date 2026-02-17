@@ -4,6 +4,7 @@ import AdminPage from '@/pages/AdminPage'
 import CategoriesPage from '@/pages/admin/CategoriesPage'
 import ScraperMonitoringPage from '@/pages/admin/ScraperMonitoring'
 import SiteConfigPage from '@/pages/admin/SiteConfigPage'
+import BrandsPage from '@/pages/admin/BrandsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ProfilePage from '@/pages/auth/ProfilePage'
@@ -48,11 +49,19 @@ export const APP_ROUTES: RouteConfig[] = [
         },
     },
     {
+        path: '/admin/brands',
+        element: <BrandsPage />,
+        menu: {
+            label: 'Markalar',
+            order: 4,
+        },
+    },
+    {
         path: '/admin/scraper-monitoring',
         element: <ScraperMonitoringPage />,
         menu: {
             label: 'Scraper İzleme',
-            order: 4,
+            order: 5,
         },
     },
     {
@@ -60,7 +69,7 @@ export const APP_ROUTES: RouteConfig[] = [
         element: <SiteConfigPage />,
         menu: {
             label: 'Site Konfigürasyonu',
-            order: 5,
+            order: 6,
         },
     }
 ]
