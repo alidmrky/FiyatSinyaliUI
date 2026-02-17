@@ -5,7 +5,9 @@ import type {
     CreateMasterBrandDto,
     UpdateMasterBrandDto,
     CreateBrandAlternativeDto,
-    BrandAlternative
+    BrandAlternative,
+    MasterBrandFilterRequest,
+    PaginatedResponse
 } from '@/types/brand';
 import type { BaseResponse } from '@/types';
 
@@ -15,7 +17,21 @@ import type { BaseResponse } from '@/types';
  */
 export const masterBrandService = {
     /**
-     * Get all master brands
+     * Get paginated and filtered master brands list
+     */
+    async getList(request: MasterBrandFilterRequest): Promise<PaginatedResponse<MasterBrand>> {
+        const response = await apiRequest<BaseResponse<PaginatedResponse<MasterBrand>>>(
+            `${API_ENDPOINTS.BRANDS.LIST}/list`,
+            {
+                method: 'POST',
+                body: JSON.stringify(request),
+            }
+        );
+        return response.data!;
+    },
+
+    /**
+     * Get all master brands (without pagination)
      */
     async getAll(): Promise<MasterBrand[]> {
         const response = await apiRequest<BaseResponse<MasterBrand[]>>(

@@ -7,10 +7,12 @@
  */
 export interface MasterBrand {
     id: string;
+    code: string;
     name: string;
     normalizedName: string;
     logoUrl?: string;
     description?: string;
+    isActive: boolean;
     isVerified: boolean;
     productCount: number;
     website?: string;
@@ -65,11 +67,13 @@ export type UnmappedBrandStatus = 'Pending' | 'Approved' | 'Rejected' | 'Ignored
  * Create Master Brand DTO
  */
 export interface CreateMasterBrandDto {
+    code: string;
     name: string;
     logoUrl?: string;
     description?: string;
     website?: string;
     countryCode?: string;
+    isActive?: boolean;
     isVerified?: boolean;
 }
 
@@ -77,11 +81,13 @@ export interface CreateMasterBrandDto {
  * Update Master Brand DTO
  */
 export interface UpdateMasterBrandDto {
+    code?: string;
     name?: string;
     logoUrl?: string;
     description?: string;
     website?: string;
     countryCode?: string;
+    isActive?: boolean;
     isVerified?: boolean;
 }
 
@@ -93,6 +99,20 @@ export interface CreateBrandAlternativeDto {
     alternativeName: string;
     source?: string;
     isAutoMatched?: boolean;
+}
+
+/**
+ * Master Brand Filter Request DTO
+ */
+export interface MasterBrandFilterRequest {
+    searchTerm?: string;
+    isActive?: boolean;
+    isVerified?: boolean;
+    minProductCount?: number;
+    pageNumber: number;
+    pageSize: number;
+    sortBy?: 'name' | 'productcount' | 'createdat';
+    sortDescending?: boolean;
 }
 
 /**

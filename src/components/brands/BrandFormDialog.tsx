@@ -26,11 +26,13 @@ interface BrandFormDialogProps {
 
 const BrandFormDialog = ({ open, onOpenChange, brand, onSuccess }: BrandFormDialogProps) => {
     const [formData, setFormData] = useState<CreateMasterBrandDto>({
+        code: '',
         name: '',
         logoUrl: '',
         description: '',
         website: '',
         countryCode: '',
+        isActive: true,
         isVerified: false,
     });
 
@@ -42,21 +44,25 @@ const BrandFormDialog = ({ open, onOpenChange, brand, onSuccess }: BrandFormDial
     useEffect(() => {
         if (brand) {
             setFormData({
+                code: brand.code,
                 name: brand.name,
                 logoUrl: brand.logoUrl || '',
                 description: brand.description || '',
                 website: brand.website || '',
                 countryCode: brand.countryCode || '',
+                isActive: brand.isActive,
                 isVerified: brand.isVerified,
             });
         } else {
             // Reset form when creating new
             setFormData({
+                code: '',
                 name: '',
                 logoUrl: '',
                 description: '',
                 website: '',
                 countryCode: '',
+                isActive: true,
                 isVerified: false,
             });
         }
@@ -74,11 +80,13 @@ const BrandFormDialog = ({ open, onOpenChange, brand, onSuccess }: BrandFormDial
         try {
             if (isEditMode) {
                 const updateData: UpdateMasterBrandDto = {
+                    code: formData.code,
                     name: formData.name,
                     logoUrl: formData.logoUrl || undefined,
                     description: formData.description || undefined,
                     website: formData.website || undefined,
                     countryCode: formData.countryCode || undefined,
+                    isActive: formData.isActive,
                     isVerified: formData.isVerified,
                 };
                 await masterBrandService.update(brand.id, updateData);
@@ -109,6 +117,19 @@ const BrandFormDialog = ({ open, onOpenChange, brand, onSuccess }: BrandFormDial
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="code">
+                            Marka Kodu <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="code"
+                            value={formData.code}
+                            onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                            placeholder="NIKE"
+                            required
+                        />
+                    </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="name">
                             Marka Adı <span className="text-red-500">*</span>
@@ -166,6 +187,22 @@ const BrandFormDialog = ({ open, onOpenChange, brand, onSuccess }: BrandFormDial
                                 maxLength={2}
                             />
                         </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="isActive"
+                            checked={formData.isActive}
+                            onCheckedChange={(checked) =>
+                                setFormData({ ...formData, isActive: checked as boolean })
+                            }
+                        />
+                        <Label
+                            htmlFor="isActive"
+                            className="text-sm font-normal cursor-pointer"
+                        >
+                            Aktif marka
+                        </Label>
                     </div>
 
                     <div className="flex items-center space-x-2">

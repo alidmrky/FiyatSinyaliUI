@@ -10,29 +10,28 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useNotification } from '@/contexts/NotificationContext';
 import { masterBrandService } from '@/services/api/brands';
-import type { MasterBrand } from '@/types/brand';
-import { Search, Plus, Edit, Trash2, ExternalLink, AlertCircle } from 'lucide-react';
+import type { MasterBrand, PaginatedResponse } from '@/types/brand';
+import { Search, Plus, Edit, Trash2, ExternalLink, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import UnmappedBrandsSection from '@/components/brands/UnmappedBrandsSection';
 import BrandFormDialog from '@/components/brands/BrandFormDialog';
 import BrandDetailsDialog from '@/components/brands/BrandDetailsDialog';
 
 const BrandsPage = () => {
-    const [brands, setBrands] = useState<MasterBrand[]>([]);
-    const [filteredBrands, setFilteredBrands] = useState<MasterBrand[]>([]);
+    const [paginatedData, setPaginatedData] = useState<PaginatedResponse<MasterBrand>>({
+        items: [],
+        totalCount: 0,
+        pageNumber: 1,
+        pageSize: 20,
+        totalPages: 0,
+    });
     const [searchQuery, setSearchQuery] = useState('');
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageSize] = useState(20);
     const [selectedBrand, setSelectedBrand] = useState<MasterBrand | null>(null);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -43,31 +42,19 @@ const BrandsPage = () => {
 
     useEffect(() => {
         loadBrands();
-    }, []);
-
-    useEffect(() => {
-        // Filter brands based on search query
-        if (searchQuery.trim() === '') {
-            setFilteredBrands(brands);
-        } else {
-            const query = searchQuery.toLowerCase();
-            setFilteredBrands(
-                brands.filter(
-                    (brand) =>
-                        brand.name.toLowerCase().includes(query) ||
-                        brand.description?.toLowerCase().includes(query)
-                )
-            );
-        }
-    }, [searchQuery, brands]);
+    }, [pageNumber, searchQuery]);
 
     const loadBrands = async () => {
         showLoading('Markalar yükleniyor...');
         try {
-            const data = await masterBrandService.getAll();
-            setBrands(data);
-            setFilteredBrands(data);
-            success('Markalar başarıyla yüklendi');
+            const data = await masterBrandService.getList({
+                pageNumber,
+                pageSize,
+                searchTerm: searchQuery || undefined,
+                sortBy: 'name',
+                sortDescending: false,
+            });
+            setPaginatedData(data);
         } catch (err) {
             error('Markalar yüklenirken hata oluştu');
             console.error(err);
@@ -155,7 +142,10 @@ const BrandsPage = () => {
                                 <Input
                                     placeholder="Marka ara..."
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        setPageNumber(1);
+                                    }}
                                     className="pl-10"
                                 />
                             </div>
@@ -171,31 +161,30 @@ const BrandsPage = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{brands.length}</div>
+                                <div className="text-2xl font-bold">{paginatedData.totalCount}</div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Sayfa {paginatedData.pageNumber} / {paginatedData.totalPages}
+                                </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-medium text-gray-600">
-                                    Doğrulanmış
+                                    Bu Sayfada
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {brands.filter((b) => b.isVerified).length}
-                                </div>
+                                <div className="text-2xl font-bold">{paginatedData.items.length}</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-medium text-gray-600">
-                                    Toplam Ürün
+                                    Sayfa Başına
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">
-                                    {brands.reduce((sum, b) => sum + b.productCount, 0).toLocaleString()}
-                                </div>
+                                <div className="text-2xl font-bold">{paginatedData.pageSize}</div>
                             </CardContent>
                         </Card>
                     </div>
@@ -206,23 +195,28 @@ const BrandsPage = () => {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Kod</TableHead>
                                         <TableHead>Marka</TableHead>
                                         <TableHead>Ürün Sayısı</TableHead>
                                         <TableHead>Durum</TableHead>
+                                        <TableHead>Aktif</TableHead>
                                         <TableHead>Ülke</TableHead>
                                         <TableHead className="text-right">İşlemler</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredBrands.length === 0 ? (
+                                    {paginatedData.items.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                                            <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                                                 {searchQuery ? 'Sonuç bulunamadı' : 'Henüz marka eklenmemiş'}
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        filteredBrands.map((brand) => (
+                                        paginatedData.items.map((brand) => (
                                             <TableRow key={brand.id}>
+                                                <TableCell>
+                                                    <span className="font-mono text-sm text-gray-600">{brand.code}</span>
+                                                </TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-3">
                                                         {brand.logoUrl && (
@@ -248,6 +242,13 @@ const BrandsPage = () => {
                                                         <Badge variant="default">Doğrulanmış</Badge>
                                                     ) : (
                                                         <Badge variant="secondary">Beklemede</Badge>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {brand.isActive ? (
+                                                        <Badge variant="default" className="bg-green-600">Aktif</Badge>
+                                                    ) : (
+                                                        <Badge variant="destructive">Pasif</Badge>
                                                     )}
                                                 </TableCell>
                                                 <TableCell>
@@ -283,6 +284,38 @@ const BrandsPage = () => {
                                     )}
                                 </TableBody>
                             </Table>
+
+                            {/* Pagination Controls */}
+                            {paginatedData.totalPages > 1 && (
+                                <div className="flex items-center justify-between mt-4 px-2">
+                                    <div className="text-sm text-gray-600">
+                                        {paginatedData.totalCount} markadan {((paginatedData.pageNumber - 1) * paginatedData.pageSize) + 1} - {Math.min(paginatedData.pageNumber * paginatedData.pageSize, paginatedData.totalCount)} arası gösteriliyor
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPageNumber(pageNumber - 1)}
+                                            disabled={pageNumber === 1}
+                                        >
+                                            <ChevronLeft className="h-4 w-4 mr-1" />
+                                            Önceki
+                                        </Button>
+                                        <span className="text-sm text-gray-600">
+                                            Sayfa {paginatedData.pageNumber} / {paginatedData.totalPages}
+                                        </span>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPageNumber(pageNumber + 1)}
+                                            disabled={pageNumber === paginatedData.totalPages}
+                                        >
+                                            Sonraki
+                                            <ChevronRight className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
