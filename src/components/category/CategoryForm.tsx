@@ -31,11 +31,20 @@ export function CategoryForm({
         description: category?.description || '',
         parentId: parentCategory?.id || category?.parentId || '',
         sortOrder: category?.sortOrder || 0,
-        isLeaf: category?.isLeaf || false,
+        isLeaf: category?.isLeaf ?? false,
     })
 
     useEffect(() => {
         if (category) {
+            console.log('🔍 [CategoryForm] Category data received:')
+            console.log('  - ID:', category.id)
+            console.log('  - Name:', category.name)
+            console.log('  - isLeaf value:', category.isLeaf)
+            console.log('  - isLeaf type:', typeof category.isLeaf)
+            console.log('  - isLeaf === true:', category.isLeaf === true)
+            console.log('  - isLeaf === false:', category.isLeaf === false)
+            console.log('  - Full category object:', JSON.stringify(category, null, 2))
+
             setFormData({
                 name: category.name,
                 code: category.code,
@@ -43,8 +52,10 @@ export function CategoryForm({
                 description: category.description || '',
                 parentId: category.parentId || '',
                 sortOrder: category.sortOrder,
-                isLeaf: category.isLeaf || false,
+                isLeaf: category.isLeaf ?? false,
             })
+
+            console.log('✅ [CategoryForm] Form data set with isLeaf:', category.isLeaf ?? false)
         } else if (parentCategory) {
             setFormData((prev) => ({
                 ...prev,

@@ -12,14 +12,12 @@ import {
 interface CategorySelectorProps {
     value?: string
     onChange: (categoryId: string) => void
-    parentId?: string
     placeholder?: string
 }
 
 export function CategorySelector({
     value,
     onChange,
-    parentId,
     placeholder = 'Kategori seçin'
 }: CategorySelectorProps) {
     const [categories, setCategories] = useState<CategoryListItem[]>([])
@@ -27,12 +25,13 @@ export function CategorySelector({
 
     useEffect(() => {
         loadCategories()
-    }, [parentId])
+    }, [])
 
     const loadCategories = async () => {
         try {
             setLoading(true)
-            const data = await CategoryService.getChildCategories(parentId)
+            // Load ALL categories so we can see the full hierarchy
+            const data = await CategoryService.getAllCategories()
             setCategories(data)
         } catch (error) {
             console.error('Error loading categories:', error)
