@@ -12,6 +12,7 @@ import {
     Activity,
     LogOut,
     Award,
+    Palette,
     TrendingDown,
     Home
 } from 'lucide-react'
@@ -24,6 +25,7 @@ const navigation = [
     { name: 'Siparişler', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Kategoriler', href: '/admin/categories', icon: Tag },
     { name: 'Markalar', href: '/admin/brands', icon: Award },
+    { name: 'Renkler', href: '/admin/colors', icon: Palette },
     { name: 'Scraper İzleme', href: '/admin/scraper-monitoring', icon: Activity },
     { name: 'Kullanıcılar', href: '/admin/users', icon: Users },
     { name: 'Raporlar', href: '/admin/reports', icon: BarChart3 },

@@ -39,3 +39,7 @@ export interface ProductSearchParams {
     siteCode?: string
     categoryCode?: string
 }
+
+// Re-export PaginatedResponse from common so product-related code has one import point
+export type { PaginatedResponse } from '@/types/common/base.types'
+

@@ -55,6 +55,7 @@ const ResolveUnmappedBrandDialog = ({
     // New Master Brand Form
     const [newBrand, setNewBrand] = useState<CreateMasterBrandDto>({
         name: unmappedBrand.brandName,
+        code: '',
         isVerified: false,
     });
 
@@ -70,6 +71,7 @@ const ResolveUnmappedBrandDialog = ({
             setNotes('');
             setNewBrand({
                 name: unmappedBrand.brandName,
+                code: '',
                 isVerified: false,
             });
         }
@@ -117,7 +119,7 @@ const ResolveUnmappedBrandDialog = ({
                     hideLoading();
                     return;
                 }
-                dto.newMasterBrand = newBrand;
+                dto.newMasterBrand = { ...newBrand, code: newBrand.code || '' };
             }
 
             await unmappedBrandService.resolve(unmappedBrand.id, dto);

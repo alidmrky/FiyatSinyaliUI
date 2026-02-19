@@ -14,16 +14,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useNotification } from '@/contexts/NotificationContext';
-import { masterBrandService } from '@/services/api/brands';
-import type { MasterBrand } from '@/types/brand';
+import { masterColorService } from '@/services/api/colors';
+import type { MasterColor } from '@/types/color';
 import type { PaginatedResponse } from '@/types/common/base.types';
-import { Search, Plus, Edit, Trash2, ExternalLink, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import UnmappedBrandsSection from '@/components/brands/UnmappedBrandsSection';
-import BrandFormDialog from '@/components/brands/BrandFormDialog';
-import BrandDetailsDialog from '@/components/brands/BrandDetailsDialog';
+import {
+    Search,
+    Plus,
+    Edit,
+    Trash2,
+    AlertCircle,
+    ChevronLeft,
+    ChevronRight,
+} from 'lucide-react';
+import UnmappedColorsSection from '@/components/colors/UnmappedColorsSection';
+import ColorFormDialog from '@/components/colors/ColorFormDialog';
+import ColorDetailsDialog from '@/components/colors/ColorDetailsDialog';
 
-const BrandsPage = () => {
-    const [paginatedData, setPaginatedData] = useState<PaginatedResponse<MasterBrand>>({
+const ColorsPage = () => {
+    const [paginatedData, setPaginatedData] = useState<PaginatedResponse<MasterColor>>({
         items: [],
         totalCount: 0,
         pageNumber: 1,
@@ -33,7 +41,7 @@ const BrandsPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [pageNumber, setPageNumber] = useState(1);
     const [pageSize] = useState(20);
-    const [selectedBrand, setSelectedBrand] = useState<MasterBrand | null>(null);
+    const [selectedColor, setSelectedColor] = useState<MasterColor | null>(null);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -42,13 +50,13 @@ const BrandsPage = () => {
     const { success, error } = useNotification();
 
     useEffect(() => {
-        loadBrands();
+        loadColors();
     }, [pageNumber, searchQuery]);
 
-    const loadBrands = async () => {
-        showLoading('Markalar yükleniyor...');
+    const loadColors = async () => {
+        showLoading('Renkler yükleniyor...');
         try {
-            const data = await masterBrandService.getList({
+            const data = await masterColorService.getList({
                 pageNumber,
                 pageSize,
                 searchTerm: searchQuery || undefined,
@@ -57,7 +65,7 @@ const BrandsPage = () => {
             });
             setPaginatedData(data);
         } catch (err) {
-            error('Markalar yüklenirken hata oluştu');
+            error('Renkler yüklenirken hata oluştu');
             console.error(err);
         } finally {
             hideLoading();
@@ -65,49 +73,46 @@ const BrandsPage = () => {
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`"${name}" markasını silmek istediğinizden emin misiniz?`)) {
+        if (!confirm(`"${name}" rengini silmek istediğinizden emin misiniz?`)) {
             return;
         }
 
-        showLoading('Marka siliniyor...');
+        showLoading('Renk siliniyor...');
         try {
-            await masterBrandService.delete(id);
-            success('Marka başarıyla silindi');
-            loadBrands();
+            await masterColorService.delete(id);
+            success('Renk başarıyla silindi');
+            loadColors();
         } catch (err) {
-            error('Marka silinirken hata oluştu');
+            error('Renk silinirken hata oluştu');
             console.error(err);
         } finally {
             hideLoading();
         }
     };
 
-    const handleViewDetails = async (brand: MasterBrand) => {
-        showLoading('Marka detayları yükleniyor...');
+    const handleViewDetails = async (color: MasterColor) => {
+        showLoading('Renk detayları yükleniyor...');
         try {
-            // Load full brand details with alternatives
-            const fullBrand = await masterBrandService.getById(brand.id);
-            if (fullBrand) {
-                setSelectedBrand(fullBrand);
+            const fullColor = await masterColorService.getById(color.id);
+            if (fullColor) {
+                setSelectedColor(fullColor);
                 setIsDetailsDialogOpen(true);
             }
         } catch (err) {
-            error('Marka detayları yüklenirken hata oluştu');
+            error('Renk detayları yüklenirken hata oluştu');
             console.error(err);
         } finally {
             hideLoading();
         }
     };
 
-    const handleEdit = (brand: MasterBrand) => {
-        setSelectedBrand(brand);
+    const handleEdit = (color: MasterColor) => {
+        setSelectedColor(color);
         setIsEditDialogOpen(true);
     };
 
     return (
         <div className="space-y-6">
-            {/* No need for header here since it's already in AdminLayout top bar */}
-
             {/* Floating Action Button */}
             <Button
                 onClick={() => setIsCreateDialogOpen(true)}
@@ -117,31 +122,32 @@ const BrandsPage = () => {
                 <Plus className="h-6 w-6" />
             </Button>
 
-            <Tabs defaultValue="master-brands" className="w-full">
+            <Tabs defaultValue="master-colors" className="w-full">
                 <TabsList className="bg-white/80 backdrop-blur-xl border border-white/20 shadow-lg p-1">
                     <TabsTrigger
-                        value="master-brands"
+                        value="master-colors"
                         className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white"
                     >
-                        Master Markalar
+                        Master Renkler
                     </TabsTrigger>
                     <TabsTrigger
-                        value="unmapped-brands"
+                        value="unmapped-colors"
                         className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white"
                     >
                         <AlertCircle className="h-4 w-4 mr-2" />
-                        Eşleşmemiş Markalar
+                        Eşleşmemiş Renkler
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="master-brands" className="space-y-4">
+                {/* ─── Master Colors Tab ─── */}
+                <TabsContent value="master-colors" className="space-y-4">
                     {/* Search Bar */}
                     <Card className="border-white/20 bg-white/80 backdrop-blur-xl shadow-lg">
                         <CardContent className="pt-6">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <Input
-                                    placeholder="Marka ara..."
+                                    placeholder="Renk ara..."
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);
@@ -158,11 +164,13 @@ const BrandsPage = () => {
                         <Card className="border-white/20 bg-white/80 backdrop-blur-xl shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-medium text-gray-600">
-                                    Toplam Marka
+                                    Toplam Renk
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{paginatedData.totalCount}</div>
+                                <div className="text-2xl font-bold">
+                                    {paginatedData.totalCount}
+                                </div>
                                 <p className="text-xs text-gray-500 mt-1">
                                     Sayfa {paginatedData.pageNumber} / {paginatedData.totalPages}
                                 </p>
@@ -175,7 +183,9 @@ const BrandsPage = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{paginatedData.items.length}</div>
+                                <div className="text-2xl font-bold">
+                                    {paginatedData.items.length}
+                                </div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -190,93 +200,110 @@ const BrandsPage = () => {
                         </Card>
                     </div>
 
-                    {/* Brands Table */}
+                    {/* Colors Table */}
                     <Card className="border-white/20 bg-white/80 backdrop-blur-xl shadow-xl">
                         <CardContent className="pt-6">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Renk</TableHead>
                                         <TableHead>Kod</TableHead>
-                                        <TableHead>Marka</TableHead>
                                         <TableHead>Ürün Sayısı</TableHead>
                                         <TableHead>Durum</TableHead>
-                                        <TableHead>Aktif</TableHead>
-                                        <TableHead>Ülke</TableHead>
                                         <TableHead className="text-right">İşlemler</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {paginatedData.items.length === 0 ? (
                                         <TableRow>
-                                            <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                                                {searchQuery ? 'Sonuç bulunamadı' : 'Henüz marka eklenmemiş'}
+                                            <TableCell
+                                                colSpan={5}
+                                                className="text-center py-8 text-gray-500"
+                                            >
+                                                Renk bulunamadı
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        paginatedData.items.map((brand) => (
-                                            <TableRow key={brand.id}>
-                                                <TableCell>
-                                                    <span className="font-mono text-sm text-gray-600">{brand.code}</span>
-                                                </TableCell>
+                                        paginatedData.items.map((color) => (
+                                            <TableRow
+                                                key={color.id}
+                                                className="cursor-pointer hover:bg-gray-50"
+                                                onClick={() => handleViewDetails(color)}
+                                            >
                                                 <TableCell>
                                                     <div className="flex items-center gap-3">
-                                                        {brand.logoUrl && (
-                                                            <img
-                                                                src={brand.logoUrl}
-                                                                alt={brand.name}
-                                                                className="h-8 w-8 rounded object-contain"
-                                                            />
-                                                        )}
+                                                        {/* Color swatch */}
+                                                        <div
+                                                            className="h-8 w-8 rounded-md border border-gray-200 flex-shrink-0 shadow-sm"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    color.hexCode || 'transparent',
+                                                                backgroundImage: color.hexCode
+                                                                    ? undefined
+                                                                    : 'repeating-conic-gradient(#ddd 0% 25%, white 0% 50%) 0 0 / 6px 6px',
+                                                            }}
+                                                            title={color.hexCode || 'Hex kodu yok'}
+                                                        />
                                                         <div>
-                                                            <div className="font-medium">{brand.name}</div>
-                                                            {brand.description && (
-                                                                <div className="text-sm text-gray-500 line-clamp-1">
-                                                                    {brand.description}
-                                                                </div>
-                                                            )}
+                                                            <div className="font-medium">
+                                                                {color.name}
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">
+                                                                {color.normalizedName}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell>{brand.productCount.toLocaleString()}</TableCell>
                                                 <TableCell>
-                                                    {brand.isVerified ? (
-                                                        <Badge variant="default">Doğrulanmış</Badge>
-                                                    ) : (
-                                                        <Badge variant="secondary">Beklemede</Badge>
-                                                    )}
+                                                    <span className="font-mono text-sm text-gray-600">
+                                                        {color.code}
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {brand.isActive ? (
-                                                        <Badge variant="default" className="bg-green-600">Aktif</Badge>
-                                                    ) : (
-                                                        <Badge variant="destructive">Pasif</Badge>
-                                                    )}
+                                                    {color.productCount.toLocaleString()}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {brand.countryCode || <span className="text-gray-400">-</span>}
+                                                    <div className="flex gap-1 flex-wrap">
+                                                        {color.isVerified && (
+                                                            <Badge variant="default">
+                                                                Doğrulanmış
+                                                            </Badge>
+                                                        )}
+                                                        {!color.isActive && (
+                                                            <Badge variant="destructive">
+                                                                Pasif
+                                                            </Badge>
+                                                        )}
+                                                        {color.isActive && !color.isVerified && (
+                                                            <Badge variant="secondary">Aktif</Badge>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
-                                                <TableCell className="text-right">
+                                                <TableCell
+                                                    className="text-right"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
                                                     <div className="flex items-center justify-end gap-2">
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => handleViewDetails(brand)}
-                                                        >
-                                                            <ExternalLink className="h-4 w-4" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => handleEdit(brand)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleEdit(color);
+                                                            }}
                                                         >
                                                             <Edit className="h-4 w-4" />
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => handleDelete(brand.id, brand.name)}
+                                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDelete(color.id, color.name);
+                                                            }}
                                                         >
-                                                            <Trash2 className="h-4 w-4 text-red-500" />
+                                                            <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     </div>
                                                 </TableCell>
@@ -286,33 +313,30 @@ const BrandsPage = () => {
                                 </TableBody>
                             </Table>
 
-                            {/* Pagination Controls */}
+                            {/* Pagination */}
                             {paginatedData.totalPages > 1 && (
-                                <div className="flex items-center justify-between mt-4 px-2">
+                                <div className="flex items-center justify-between mt-4 pt-4 border-t">
                                     <div className="text-sm text-gray-600">
-                                        {paginatedData.totalCount} markadan {((paginatedData.pageNumber - 1) * paginatedData.pageSize) + 1} - {Math.min(paginatedData.pageNumber * paginatedData.pageSize, paginatedData.totalCount)} arası gösteriliyor
+                                        Toplam {paginatedData.totalCount} renk, sayfa{' '}
+                                        {paginatedData.pageNumber} /{' '}
+                                        {paginatedData.totalPages}
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex gap-2">
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => setPageNumber(pageNumber - 1)}
                                             disabled={pageNumber === 1}
+                                            onClick={() => setPageNumber((p) => p - 1)}
                                         >
-                                            <ChevronLeft className="h-4 w-4 mr-1" />
-                                            Önceki
+                                            <ChevronLeft className="h-4 w-4" />
                                         </Button>
-                                        <span className="text-sm text-gray-600">
-                                            Sayfa {paginatedData.pageNumber} / {paginatedData.totalPages}
-                                        </span>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => setPageNumber(pageNumber + 1)}
-                                            disabled={pageNumber === paginatedData.totalPages}
+                                            disabled={pageNumber >= paginatedData.totalPages}
+                                            onClick={() => setPageNumber((p) => p + 1)}
                                         >
-                                            Sonraki
-                                            <ChevronRight className="h-4 w-4 ml-1" />
+                                            <ChevronRight className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </div>
@@ -321,46 +345,47 @@ const BrandsPage = () => {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="unmapped-brands">
-                    <UnmappedBrandsSection onBrandMapped={loadBrands} />
+                {/* ─── Unmapped Colors Tab ─── */}
+                <TabsContent value="unmapped-colors">
+                    <UnmappedColorsSection onColorMapped={() => loadColors()} />
                 </TabsContent>
             </Tabs>
 
             {/* Create Dialog */}
-            <BrandFormDialog
+            <ColorFormDialog
                 open={isCreateDialogOpen}
                 onOpenChange={setIsCreateDialogOpen}
                 onSuccess={() => {
-                    loadBrands();
                     setIsCreateDialogOpen(false);
+                    loadColors();
                 }}
             />
 
             {/* Edit Dialog */}
-            {selectedBrand && (
-                <BrandFormDialog
+            {selectedColor && (
+                <ColorFormDialog
                     open={isEditDialogOpen}
                     onOpenChange={setIsEditDialogOpen}
-                    brand={selectedBrand}
+                    color={selectedColor}
                     onSuccess={() => {
-                        loadBrands();
                         setIsEditDialogOpen(false);
-                        setSelectedBrand(null);
+                        setSelectedColor(null);
+                        loadColors();
                     }}
                 />
             )}
 
             {/* Details Dialog */}
-            {selectedBrand && (
-                <BrandDetailsDialog
+            {selectedColor && (
+                <ColorDetailsDialog
                     open={isDetailsDialogOpen}
                     onOpenChange={setIsDetailsDialogOpen}
-                    brand={selectedBrand}
-                    onAlternativeAdded={loadBrands}
+                    color={selectedColor}
+                    onAlternativeAdded={() => handleViewDetails(selectedColor)}
                 />
             )}
         </div>
     );
 };
 
-export default BrandsPage;
+export default ColorsPage;

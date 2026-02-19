@@ -102,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
      * Register new user
      */
     const register = async (data: RegisterDto) => {
-        const authData = await authService.register(data);
+        await authService.register(data);
         const currentUser = authService.getCurrentUser();
         setUser(currentUser);
     };

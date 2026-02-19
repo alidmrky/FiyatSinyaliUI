@@ -7,8 +7,8 @@ import type {
     CreateBrandAlternativeDto,
     BrandAlternative,
     MasterBrandFilterRequest,
-    PaginatedResponse
 } from '@/types/brand';
+import type { PaginatedResponse } from '@/types/common/base.types';
 import type { BaseResponse } from '@/types';
 
 /**

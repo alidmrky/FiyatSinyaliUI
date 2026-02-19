@@ -5,6 +5,7 @@ import CategoriesPage from '@/pages/admin/CategoriesPage'
 import ScraperMonitoringPage from '@/pages/admin/ScraperMonitoring'
 import SiteConfigPage from '@/pages/admin/SiteConfigPage'
 import BrandsPage from '@/pages/admin/BrandsPage'
+import ColorsPage from '@/pages/admin/ColorsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ProfilePage from '@/pages/auth/ProfilePage'
@@ -57,11 +58,19 @@ export const APP_ROUTES: RouteConfig[] = [
         },
     },
     {
+        path: '/admin/colors',
+        element: <ColorsPage />,
+        menu: {
+            label: 'Renkler',
+            order: 5,
+        },
+    },
+    {
         path: '/admin/scraper-monitoring',
         element: <ScraperMonitoringPage />,
         menu: {
             label: 'Scraper İzleme',
-            order: 5,
+            order: 6,
         },
     },
     {
@@ -69,9 +78,7 @@ export const APP_ROUTES: RouteConfig[] = [
         element: <SiteConfigPage />,
         menu: {
             label: 'Site Konfigürasyonu',
-            order: 6,
+            order: 7,
         },
-    }
+    },
 ]
-
-

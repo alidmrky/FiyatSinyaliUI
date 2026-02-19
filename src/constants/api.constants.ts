@@ -40,9 +40,28 @@ export const API_ENDPOINTS = {
         RESOLVE: 'api/unmappedbrands',
         BULK_IGNORE: 'api/unmappedbrands/bulk-ignore',
     },
+    COLORS: {
+        LIST: 'api/mastercolors',
+        GET: 'api/mastercolors',
+        SEARCH: 'api/mastercolors/search',
+        TOP: 'api/mastercolors/top',
+        CREATE: 'api/mastercolors',
+        UPDATE: 'api/mastercolors',
+        DELETE: 'api/mastercolors',
+        ADD_ALTERNATIVE: 'api/mastercolors',
+    },
+    UNMAPPED_COLORS: {
+        LIST: 'api/unmappedcolors/list',
+        GET: 'api/unmappedcolors',
+        PENDING_COUNT: 'api/unmappedcolors/pending-count',
+        SUGGESTIONS: 'api/unmappedcolors',
+        RESOLVE: 'api/unmappedcolors',
+        BULK_IGNORE: 'api/unmappedcolors/bulk-ignore',
+    },
     DASHBOARD: {
         STATS: 'api/dashboard/stats',
         MONGO_STATS: 'api/dashboard/mongo-stats',
         POSTGRE_STATS: 'api/dashboard/postgre-stats',
     },
 } as const
+

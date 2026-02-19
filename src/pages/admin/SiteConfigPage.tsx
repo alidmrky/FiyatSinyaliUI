@@ -316,7 +316,9 @@ export default function SiteConfigPage() {
                     </DialogHeader>
                     <SiteConfigForm
                         site={selectedSite || undefined}
-                        onSubmit={modalMode === 'create-site' ? handleCreateSite : handleUpdateSite}
+                        onSubmit={modalMode === 'create-site'
+                            ? (data) => handleCreateSite(data as CreateSiteConfigDto)
+                            : (data) => handleUpdateSite(data as UpdateSiteConfigDto)}
                         onCancel={() => {
                             setModalMode(null)
                             setSelectedSite(null)
@@ -340,7 +342,9 @@ export default function SiteConfigPage() {
                     <SiteCategoryForm
                         category={selectedCategory || undefined}
                         parentCategory={parentCategory || undefined}
-                        onSubmit={modalMode === 'create-category' ? handleCreateCategory : handleUpdateCategory}
+                        onSubmit={modalMode === 'create-category'
+                            ? (data) => handleCreateCategory(data as CreateSiteCategoryDto)
+                            : (data) => handleUpdateCategory(data as UpdateSiteCategoryDto)}
                         onCancel={() => {
                             setModalMode(null)
                             setSelectedCategory(null)
