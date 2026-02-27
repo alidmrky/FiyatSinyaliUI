@@ -81,3 +81,58 @@ export interface DashboardStats {
   unhealthy: number
   circuitOpen: number
 }
+
+// ─── ScrapTest ────────────────────────────────────────────────────────────────
+
+/**
+ * Request body for POST /api/ScrapTest
+ */
+export interface ScrapTestRequest {
+  siteName: string
+  productUrl: string
+}
+
+/**
+ * Response from POST /api/ScrapTest
+ */
+export interface ScrapTestResult {
+  /** Test edilen site adı */
+  siteName: string
+  /** Test edilen ürün URL'si */
+  productUrl: string
+  /** Scraper'dan gelen ham JSON (JSON-LD veya API response) */
+  scrapResponseJson: string
+  /** Ham JSON'un Product entity'sine dönüştürülmüş hali */
+  mappedProduct?: MappedProduct
+  /** Hata mesajı (sadece başarısız ise) */
+  errorMessage?: string
+  /** Scrape işlemi süresi (ms) */
+  durationMs: number
+}
+
+/**
+ * Scraper tarafından çekilen ürün verisi (backend Product entity)
+ */
+export interface MappedProduct {
+  id?: string
+  displayName?: string
+  name?: string
+  brandName?: string
+  brandCode?: string
+  color?: string
+  colorCode?: string
+  currentPrice?: number
+  originalPrice?: number
+  discount?: number
+  imageUrl?: string
+  siteCode?: string
+  siteName?: string
+  categoryName?: string
+  categoryCode?: string
+  externalId?: string
+  productUrl?: string
+  inStock?: boolean
+  status?: string
+  createdAt?: string
+  updatedAt?: string
+}

@@ -63,5 +63,8 @@ export const API_ENDPOINTS = {
         MONGO_STATS: 'api/dashboard/mongo-stats',
         POSTGRE_STATS: 'api/dashboard/postgre-stats',
     },
+    SCRAP_TEST: {
+        TEST: 'api/ScrapTest',
+    },
 } as const
 

@@ -9,6 +9,8 @@ import ColorsPage from '@/pages/admin/ColorsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ProfilePage from '@/pages/auth/ProfilePage'
+import ScrapTestPage from '@/pages/admin/ScrapTestPage'
+
 
 export const APP_ROUTES: RouteConfig[] = [
     {
@@ -81,4 +83,13 @@ export const APP_ROUTES: RouteConfig[] = [
             order: 7,
         },
     },
+    {
+        path: '/admin/scrap-test',
+        element: <ScrapTestPage />,
+        menu: {
+            label: 'Scraper Test',
+            order: 8,
+        },
+    },
 ]
+

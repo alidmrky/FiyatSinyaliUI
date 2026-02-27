@@ -14,7 +14,8 @@ import {
     Award,
     Palette,
     TrendingDown,
-    Home
+    Home,
+    FlaskConical
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
@@ -27,6 +28,7 @@ const navigation = [
     { name: 'Markalar', href: '/admin/brands', icon: Award },
     { name: 'Renkler', href: '/admin/colors', icon: Palette },
     { name: 'Scraper İzleme', href: '/admin/scraper-monitoring', icon: Activity },
+    { name: 'Scraper Test', href: '/admin/scrap-test', icon: FlaskConical },
     { name: 'Kullanıcılar', href: '/admin/users', icon: Users },
     { name: 'Raporlar', href: '/admin/reports', icon: BarChart3 },
     { name: 'Site Konfigürasyonu', href: '/admin/site-config', icon: Settings },
