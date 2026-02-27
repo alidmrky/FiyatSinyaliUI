@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import type { SiteConfiguration, CreateSiteConfigDto, UpdateSiteConfigDto, SiteType } from '@/types/siteConfig'
+import type { SiteConfiguration, CreateSiteConfigDto, UpdateSiteConfigDto } from '@/types/siteConfig'
+import { SiteType } from '@/types/siteConfig'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,7 +18,7 @@ export function SiteConfigForm({ site, onSubmit, onCancel, loading }: SiteConfig
         siteName: site?.siteName || '',
         displayName: site?.displayName || '',
         baseUrl: site?.baseUrl || '',
-        siteType: site?.siteType || ('Retail' as SiteType),
+        siteType: site?.siteType?.toString() ?? SiteType.Retail.toString(),
         isEnabled: site?.isEnabled ?? true,
         scrapingIntervalMinutes: site?.scrapingIntervalMinutes || 60,
         maxRetryAttempts: site?.maxRetryAttempts || 3,
@@ -26,7 +27,11 @@ export function SiteConfigForm({ site, onSubmit, onCancel, loading }: SiteConfig
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit(formData)
+        const payload = {
+            ...formData,
+            siteType: parseInt(formData.siteType) as SiteType
+        }
+        onSubmit(payload)
     }
 
     const handleChange = (field: string, value: string | number | boolean) => {
@@ -87,8 +92,8 @@ export function SiteConfigForm({ site, onSubmit, onCancel, loading }: SiteConfig
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="Retail">Retail</SelectItem>
-                        <SelectItem value="Marketplace">Marketplace</SelectItem>
+                        <SelectItem value={SiteType.Retail.toString()}>Retail</SelectItem>
+                        <SelectItem value={SiteType.Marketplace.toString()}>Marketplace</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

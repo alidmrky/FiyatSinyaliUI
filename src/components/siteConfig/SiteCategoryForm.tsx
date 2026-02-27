@@ -25,7 +25,21 @@ export function SiteCategoryForm({ category, parentCategory, onSubmit, onCancel,
         storeId: category?.storeId || '',
         locale: category?.locale || '',
         priority: category?.priority || 0,
+        lastFullScan: category?.lastFullScan || (null as string | null),
+        nextFullScan: category?.nextFullScan || (null as string | null),
+        lastPriceScan: category?.lastPriceScan || (null as string | null),
+        nextPriceScanAt: category?.nextPriceScanAt || (null as string | null),
     })
+
+    const handleResetScans = () => {
+        setFormData(prev => ({
+            ...prev,
+            lastFullScan: null,
+            nextFullScan: null,
+            lastPriceScan: null,
+            nextPriceScanAt: null
+        }))
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -37,6 +51,10 @@ export function SiteCategoryForm({ category, parentCategory, onSubmit, onCancel,
             section: formData.section || undefined,
             storeId: formData.storeId || undefined,
             locale: formData.locale || undefined,
+            lastFullScan: formData.lastFullScan,
+            nextFullScan: formData.nextFullScan,
+            lastPriceScan: formData.lastPriceScan,
+            nextPriceScanAt: formData.nextPriceScanAt,
         }
         onSubmit(data)
     }
@@ -185,6 +203,41 @@ export function SiteCategoryForm({ category, parentCategory, onSubmit, onCancel,
                     </div>
                 </div>
             </details>
+
+            {/* Tarama Tarihleri (Salt Okunur) */}
+            {category && (
+                <details className="border rounded-lg p-3">
+                    <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                        Tarama Zamanları (Salt Okunur)
+                    </summary>
+                    <div className="mt-3 space-y-3">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label>Son Full Tarama</Label>
+                                <Input disabled value={formData.lastFullScan === null ? 'Sıfırlanacak' : (formData.lastFullScan ? new Date(formData.lastFullScan).toLocaleString('tr-TR') : '-')} />
+                            </div>
+                            <div>
+                                <Label>Sonraki Full Tarama</Label>
+                                <Input disabled value={formData.nextFullScan === null ? 'Sıfırlanacak' : (formData.nextFullScan ? new Date(formData.nextFullScan).toLocaleString('tr-TR') : '-')} />
+                            </div>
+                            <div>
+                                <Label>Son Fiyat Taraması</Label>
+                                <Input disabled value={formData.lastPriceScan === null ? 'Sıfırlanacak' : (formData.lastPriceScan ? new Date(formData.lastPriceScan).toLocaleString('tr-TR') : '-')} />
+                            </div>
+                            <div>
+                                <Label>Sonraki Fiyat Taraması</Label>
+                                <Input disabled value={formData.nextPriceScanAt === null ? 'Sıfırlanacak' : (formData.nextPriceScanAt ? new Date(formData.nextPriceScanAt).toLocaleString('tr-TR') : '-')} />
+                            </div>
+                        </div>
+
+                        <div className="pt-2 flex justify-end">
+                            <Button type="button" variant="destructive" size="sm" onClick={handleResetScans} disabled={loading}>
+                                Son Çalıştırma Zamanlarını Sıfırla
+                            </Button>
+                        </div>
+                    </div>
+                </details>
+            )}
 
             {/* Actions */}
             <div className="flex justify-end gap-2 pt-4">

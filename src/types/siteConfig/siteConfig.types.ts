@@ -1,6 +1,6 @@
 export enum SiteType {
-    Retail = 'Retail',
-    Marketplace = 'Marketplace'
+    Retail = 0,
+    Marketplace = 1
 }
 
 export interface SiteConfiguration {
@@ -34,12 +34,17 @@ export interface SiteCategory {
     leafPath: string
     children?: SiteCategory[]
     masterCategoryId?: string
+    masterCategoryCode?: string
     isAutoMapped: boolean
     mappingConfidence: number
     priority: number
     section?: string
     storeId?: string
     locale?: string
+    lastFullScan?: string
+    nextFullScan?: string
+    lastPriceScan?: string
+    nextPriceScanAt?: string
 }
 
 export interface CreateSiteConfigDto {
@@ -92,4 +97,8 @@ export interface UpdateSiteCategoryDto {
     priority?: number
     isAutoMapped?: boolean
     mappingConfidence?: number
+    lastFullScan?: string | null
+    nextFullScan?: string | null
+    lastPriceScan?: string | null
+    nextPriceScanAt?: string | null
 }
