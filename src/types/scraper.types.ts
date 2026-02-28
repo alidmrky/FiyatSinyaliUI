@@ -5,16 +5,31 @@ export enum HealthStatus {
 }
 
 export enum ScraperErrorType {
-  ParseError = 'ParseError',
-  Timeout = 'Timeout',
-  RateLimited = 'RateLimited',
-  NetworkError = 'NetworkError',
-  SiteError = 'SiteError',
-  Unknown = 'Unknown'
+  // Network/HTTP (1-9)
+  NetworkError = 1,
+  Timeout = 2,
+  RateLimited = 3,
+  IpBlocked = 4,
+  AuthenticationError = 5,
+  SiteError = 6,
+
+  // Parsing/Data (10-19)
+  ParseError = 10,
+  SiteStructureChanged = 11,
+  MissingRequiredField = 12,
+  InvalidDataFormat = 13,
+
+  // Business Logic (20-29)
+  ProductNotFound = 20,
+  CategoryNotFound = 21,
+
+  // Unknown/Other (99)
+  Unknown = 99
 }
 
 export enum ScraperLogStatus {
   Success = 'Success',
+  Warning = 'Warning',
   Error = 'Error',
   Fatal = 'Fatal'
 }

@@ -13,6 +13,7 @@ import {
     Server,
     Store,
     RefreshCw,
+    Palette,
 } from 'lucide-react';
 import { dashboardService } from '@/services/api/dashboard';
 import type { DashboardStats } from '@/types/dashboard';
@@ -70,7 +71,7 @@ const AdminPage = () => {
             description: 'İşleme alınacak',
         },
         {
-            title: 'Yayınlandı',
+            title: 'Kuyrukta',
             value: stats.mongoProductStats.publishedCount.toLocaleString(),
             icon: CheckCircle,
             gradient: 'from-green-500 to-emerald-500',
@@ -92,6 +93,14 @@ const AdminPage = () => {
             gradient: 'from-orange-500 to-red-500',
             bgGradient: 'from-orange-50 to-red-50',
             description: 'Marka eşleşmedi',
+        },
+        {
+            title: 'Renk Problemi',
+            value: stats.mongoProductStats.colorUnresolvedCount.toLocaleString(),
+            icon: Palette,
+            gradient: 'from-pink-500 to-fuchsia-500',
+            bgGradient: 'from-pink-50 to-fuchsia-50',
+            description: 'Renk eşleşmedi',
         },
     ];
 
@@ -139,7 +148,7 @@ const AdminPage = () => {
                 <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
                     MongoDB - Ürün Durumları
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     {mongoStats.map((stat, index) => (
                         <motion.div
                             key={stat.title}

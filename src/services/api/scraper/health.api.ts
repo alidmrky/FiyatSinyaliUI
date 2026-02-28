@@ -1,24 +1,49 @@
 import { apiRequestWithResult } from '../client'
-import { ScraperHealthCheck } from '@/types/scraper.types'
+import { ScraperHealthCheck, HealthStatus } from '@/types/scraper.types'
+
+// C# enum'lar varsayılan olarak integer serialize edilir (Healthy=0, Degraded=1, Unhealthy=2)
+// Backend'e JsonStringEnumConverter eklenene kadar numeric→string map yapıyoruz
+const HEALTH_STATUS_MAP: Record<number | string, HealthStatus> = {
+    0: HealthStatus.Healthy,
+    1: HealthStatus.Degraded,
+    2: HealthStatus.Unhealthy,
+    // String gelirse de doğru çalışsın
+    Healthy: HealthStatus.Healthy,
+    Degraded: HealthStatus.Degraded,
+    Unhealthy: HealthStatus.Unhealthy,
+}
+
+function normalizeHealth(health: ScraperHealthCheck): ScraperHealthCheck {
+    return {
+        ...health,
+        status: HEALTH_STATUS_MAP[health.status as unknown as number] ?? HealthStatus.Unhealthy,
+    }
+}
 
 export const healthApi = {
     /**
      * Get all scraper health checks
      */
-    getAll: () =>
-        apiRequestWithResult<ScraperHealthCheck[]>('api/scraperhealth'),
+    getAll: async () => {
+        const data = await apiRequestWithResult<ScraperHealthCheck[]>('api/scraperhealth')
+        return data.map(normalizeHealth)
+    },
 
     /**
      * Get health check for a specific site
      */
-    getBySite: (siteName: string) =>
-        apiRequestWithResult<ScraperHealthCheck>(`api/scraperhealth/${siteName}`),
+    getBySite: async (siteName: string) => {
+        const data = await apiRequestWithResult<ScraperHealthCheck>(`api/scraperhealth/${siteName}`)
+        return normalizeHealth(data)
+    },
 
     /**
      * Get all unhealthy sites
      */
-    getUnhealthy: () =>
-        apiRequestWithResult<ScraperHealthCheck[]>('api/scraperhealth/unhealthy'),
+    getUnhealthy: async () => {
+        const data = await apiRequestWithResult<ScraperHealthCheck[]>('api/scraperhealth/unhealthy')
+        return data.map(normalizeHealth)
+    },
 
     /**
      * Reset circuit breaker for a site

@@ -114,12 +114,15 @@ export function CategoryForm({
                     type="text"
                     required
                     value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    onChange={(e) => mode === 'create' && setFormData({ ...formData, code: e.target.value })}
+                    readOnly={mode === 'edit'}
                     placeholder="ELEC (benzersiz kod)"
-                    className="mt-1"
+                    className={`mt-1 ${mode === 'edit' ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}`}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                    Kategori için benzersiz kod (büyük harf, boşluksuz)
+                    {mode === 'edit'
+                        ? 'Kod alanı düzenlenemez'
+                        : 'Kategori için benzersiz kod (büyük harf, boşluksuz)'}
                 </p>
             </div>
 

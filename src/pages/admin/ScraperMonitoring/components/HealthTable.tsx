@@ -13,12 +13,12 @@ interface HealthTableProps {
 
 const HealthTable = ({ data, onRefresh }: HealthTableProps) => {
     const getStatusBadge = (status: HealthStatus) => {
-        const badges = {
+        const badges: Record<string, { icon: string; text: string; class: string }> = {
             Healthy: { icon: '🟢', text: 'Sağlıklı', class: 'bg-green-100 text-green-800' },
             Degraded: { icon: '🟡', text: 'Bozulmuş', class: 'bg-yellow-100 text-yellow-800' },
             Unhealthy: { icon: '🔴', text: 'Sorunlu', class: 'bg-red-100 text-red-800' }
         }
-        const badge = badges[status]
+        const badge = badges[status] ?? { icon: '⚪', text: status ?? 'Bilinmiyor', class: 'bg-gray-100 text-gray-600' }
         return (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.class}`}>
                 <span className="mr-1">{badge.icon}</span>
@@ -103,8 +103,8 @@ const HealthTable = ({ data, onRefresh }: HealthTableProps) => {
                                             <div className="w-32 bg-gray-200 rounded-full h-2 mr-2">
                                                 <div
                                                     className={`h-2 rounded-full ${health.successRate >= 90 ? 'bg-green-500' :
-                                                            health.successRate >= 70 ? 'bg-yellow-500' :
-                                                                'bg-red-500'
+                                                        health.successRate >= 70 ? 'bg-yellow-500' :
+                                                            'bg-red-500'
                                                         }`}
                                                     style={{ width: `${health.successRate}%` }}
                                                 />

@@ -13,13 +13,13 @@ interface HealthCardProps {
 }
 
 const HealthCard = ({ health, onResetCircuit, onResetMetrics }: HealthCardProps) => {
-    const statusConfig = {
+    const statusConfig: Record<string, { icon: string; text: string; bgClass: string; borderClass: string }> = {
         Healthy: { icon: '🟢', text: 'Sağlıklı', bgClass: 'bg-green-50', borderClass: 'border-green-200' },
         Degraded: { icon: '🟡', text: 'Bozulmuş', bgClass: 'bg-yellow-50', borderClass: 'border-yellow-200' },
         Unhealthy: { icon: '🔴', text: 'Sorunlu', bgClass: 'bg-red-50', borderClass: 'border-red-200' }
     }
 
-    const config = statusConfig[health.status]
+    const config = statusConfig[health.status] ?? { icon: '⚪', text: health.status ?? 'Bilinmiyor', bgClass: 'bg-gray-50', borderClass: 'border-gray-200' }
 
     return (
         <div className={`${config.bgClass} ${config.borderClass} border rounded-lg p-6`}>
@@ -41,8 +41,8 @@ const HealthCard = ({ health, onResetCircuit, onResetMetrics }: HealthCardProps)
                 <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                         className={`h-2 rounded-full ${health.successRate >= 90 ? 'bg-green-500' :
-                                health.successRate >= 70 ? 'bg-yellow-500' :
-                                    'bg-red-500'
+                            health.successRate >= 70 ? 'bg-yellow-500' :
+                                'bg-red-500'
                             }`}
                         style={{ width: `${health.successRate}%` }}
                     />

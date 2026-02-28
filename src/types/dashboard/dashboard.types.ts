@@ -10,6 +10,7 @@ export interface MongoProductStats {
     publishedCount: number;
     failedCount: number;
     brandUnresolvedCount: number;
+    colorUnresolvedCount: number;
     completedCount: number;
     totalCount: number;
 }

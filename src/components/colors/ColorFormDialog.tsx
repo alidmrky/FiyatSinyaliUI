@@ -115,10 +115,15 @@ const ColorFormDialog = ({ open, onOpenChange, color, onSuccess }: ColorFormDial
                         <Input
                             id="code"
                             value={formData.code}
-                            onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                            onChange={(e) => !isEditMode && setFormData({ ...formData, code: e.target.value })}
+                            readOnly={isEditMode}
                             placeholder="NAVY_BLUE"
                             required
+                            className={isEditMode ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}
                         />
+                        {isEditMode && (
+                            <p className="text-xs text-gray-500">Renk kodu düzenlenemez</p>
+                        )}
                     </div>
 
                     {/* Name */}
