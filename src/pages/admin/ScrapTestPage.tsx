@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useLoading } from '@/contexts/LoadingContext'
 import { useNotification } from '@/contexts/NotificationContext'
 import { scraperApi } from '@/services/api/scraper'
@@ -15,9 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import JsonView from '@uiw/react-json-view'
 
 // ─── Site options ──────────────────────────────────────────────────────────────
-const SUPPORTED_SITES = ['Beymen', 'Boyner'] as const
+const SUPPORTED_SITES = ['Beymen', 'Boyner', 'Vakko'] as const
 
 // ─── Field renderer ────────────────────────────────────────────────────────────
 interface InfoRowProps {
@@ -88,6 +90,16 @@ const ScrapTestPage = () => {
             return raw
         }
     }
+
+    // ─── Parsed JSON ─────────────────────────────────────────────────────────
+    const parsedJson = useMemo(() => {
+        if (!result?.scrapResponseJson) return null
+        try {
+            return JSON.parse(result.scrapResponseJson)
+        } catch {
+            return null
+        }
+    }, [result?.scrapResponseJson])
 
     const p = result?.mappedProduct
 
@@ -215,18 +227,45 @@ const ScrapTestPage = () => {
                             </CardContent>
                         </Card>
 
-                        {/* SAĞ — Ham JSON */}
-                        <Card className="h-full">
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-base">Ham JSON</CardTitle>
+                        {/* SAĞ — Scrape Sonucu */}
+                        <Card className="h-full flex flex-col">
+                            <CardHeader className="pb-2 border-b">
+                                <CardTitle className="text-base">Scrape Sonucu</CardTitle>
                             </CardHeader>
-                            <CardContent className="p-0">
+                            <CardContent className="p-0 flex-1 relative min-h-[400px]">
                                 {result.scrapResponseJson ? (
-                                    <pre className="overflow-auto rounded-b-lg bg-muted p-4 text-xs leading-relaxed max-h-[600px] whitespace-pre-wrap break-all">
-                                        {prettyJson(result.scrapResponseJson)}
-                                    </pre>
+                                    <Tabs defaultValue="tree" className="w-full h-full flex flex-col">
+                                        <div className="px-4 pt-3 pb-2 border-b bg-muted/10">
+                                            <TabsList>
+                                                <TabsTrigger value="tree">Ağaç Görünümü</TabsTrigger>
+                                                <TabsTrigger value="raw">Ham JSON</TabsTrigger>
+                                            </TabsList>
+                                        </div>
+                                        <div className="flex-1 overflow-auto max-h-[600px]">
+                                            <TabsContent value="tree" className="p-4 m-0 data-[state=inactive]:hidden">
+                                                {parsedJson ? (
+                                                    <div className="font-mono text-sm max-w-full">
+                                                        <JsonView
+                                                            value={parsedJson}
+                                                            displayDataTypes={false}
+                                                            displayObjectSize={true}
+                                                            enableClipboard={true}
+                                                            style={{ backgroundColor: 'transparent' }}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-sm text-red-500">JSON parse edilemedi.</p>
+                                                )}
+                                            </TabsContent>
+                                            <TabsContent value="raw" className="m-0 data-[state=inactive]:hidden">
+                                                <pre className="p-4 text-xs leading-relaxed bg-muted/50 whitespace-pre-wrap break-all min-h-full">
+                                                    {prettyJson(result.scrapResponseJson)}
+                                                </pre>
+                                            </TabsContent>
+                                        </div>
+                                    </Tabs>
                                 ) : (
-                                    <p className="text-sm text-muted-foreground italic px-6 pb-4">
+                                    <p className="text-sm text-muted-foreground italic p-6">
                                         Ham JSON verisi yok.
                                     </p>
                                 )}
